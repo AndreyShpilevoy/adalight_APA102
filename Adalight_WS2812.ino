@@ -1,14 +1,17 @@
 /*
- * Arduino interface for the use of WS2812 strip LEDs
+ * Arduino interface for the use of APA102 strip LEDs
  * Uses Adalight protocol and is compatible with Boblight, Prismatik etc...
  * "Magic Word" for synchronisation is 'Ada' followed by LED High, Low and Checksum
  * @author: Wifsimster <wifsimster@gmail.com> 
  * @library: FastLED v3.001
  * @date: 11/22/2015
+ * Changed to APA102 + teency by kto
  */
 #include "FastLED.h"
-#define NUM_LEDS 240
-#define DATA_PIN 6
+#define NUM_LEDS 122
+#define DATA_PIN 5
+#define CLOCK_PIN 20
+#define COLOR_SCHEME BGR
 
 // Baudrate, higher rate allows faster refresh rate and more LEDs (defined in /etc/boblight.conf)
 #define serialRate 115200
@@ -21,7 +24,8 @@ CRGB leds[NUM_LEDS];
 
 void setup() {
   // Use NEOPIXEL to keep true colors
-  FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);
+  LEDS.addLeds<APA102, DATA_PIN, CLOCK_PIN, COLOR_SCHEME, DATA_RATE_MHZ(2)>(leds, NUM_LEDS); 
+  FastLED.setBrightness(128);
   
   // Initial RGB flash
   LEDS.showColor(CRGB(255, 0, 0));
@@ -30,7 +34,7 @@ void setup() {
   delay(500);
   LEDS.showColor(CRGB(0, 0, 255));
   delay(500);
-  LEDS.showColor(CRGB(0, 0, 0));
+  LEDS.showColor(CRGB(255, 210, 110));
   
   Serial.begin(serialRate);
   // Send "Magic Word" string to host
